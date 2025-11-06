@@ -1,0 +1,153 @@
+﻿# ==============================================================================#
+# requirements.txt
+# 
+# Dependency specification for "Prompting for Policy: Forecasting Macroeconomic
+# Scenarios with Synthetic LLM Personas" replication pipeline.
+#
+# Python Version Requirement: >=3.9,<3.13
+#
+# Installation Instructions:
+#   1. Create and activate a virtual environment:
+#      python -m venv venv
+#      source venv/bin/activate  # On Windows: venv\Scripts\activate
+#
+#   2. Upgrade pip to the latest version:
+#      pip install --upgrade pip
+#
+#   3. Install all dependencies:
+#      pip install -r requirements.txt
+#
+#   4. Download the required spaCy language model:
+#      python -m spacy download en_core_web_sm
+#      # For higher accuracy NER, optionally use:
+#      # python -m spacy download en_core_web_lg
+#
+# Author: CS Chirinda
+# Version: 1.0.0
+# License: MIT
+# ==============================================================================#
+
+# ==============================================================================
+# Core Data Processing and Numerical Computation
+# ==============================================================================
+
+# NumPy: Fundamental package for numerical computing with multi-dimensional arrays
+numpy>=1.24.0,<2.0.0
+
+# Pandas: High-performance data structures and data analysis tools
+pandas>=2.0.0,<3.0.0
+
+# PyArrow: Cross-language development platform for in-memory data with Parquet support
+pyarrow>=12.0.0,<15.0.0
+
+# ==============================================================================
+# Natural Language Processing and Machine Learning
+# ==============================================================================
+
+# spaCy: Industrial-strength NLP library for Named Entity Recognition
+# Note: Requires separate download of language model (see instructions above)
+spacy>=3.6.0,<4.0.0
+
+# Sentence Transformers: Framework for state-of-the-art sentence embeddings
+# This will automatically install torch, transformers, and huggingface-hub
+sentence-transformers>=2.2.0,<3.0.0
+
+# Tiktoken: Fast BPE tokenizer for use with OpenAI models (token counting)
+tiktoken>=0.5.0,<1.0.0
+
+# ==============================================================================
+# API Integration and Asynchronous Operations
+# ==============================================================================
+
+# OpenAI: Official Python bindings for OpenAI API (GPT-4o, embeddings)
+# Version >=1.0.0 required for AsyncOpenAI client
+openai>=1.12.0,<2.0.0
+
+# TQDM: Fast, extensible progress bar for loops and async operations
+tqdm>=4.65.0,<5.0.0
+
+# ==============================================================================
+# Statistical Analysis and Hypothesis Testing
+# ==============================================================================
+
+# SciPy: Scientific computing library for statistical tests (KS test, binomial)
+scipy>=1.10.0,<2.0.0
+
+# Scikit-learn: Machine learning utilities (Cohen's kappa, confusion matrix)
+scikit-learn>=1.3.0,<2.0.0
+
+# ==============================================================================
+# Graph Analysis for Semantic Deduplication
+# ==============================================================================
+
+# NetworkX: Library for creation, manipulation, and study of complex networks
+networkx>=3.1,<4.0
+
+# ==============================================================================
+# Approximate Nearest Neighbor Search
+# ==============================================================================
+
+# HNSWlib: Fast approximate nearest neighbor search with HNSW algorithm
+# Used for efficient semantic deduplication at scale
+hnswlib>=0.7.0,<1.0.0
+
+# ==============================================================================
+# Optional Dependencies for Enhanced Functionality
+# ==============================================================================
+
+# Jupyter: Interactive computing environment (optional, for exploratory analysis)
+# jupyter>=1.0.0,<2.0.0
+# ipykernel>=6.25.0,<7.0.0
+
+# Matplotlib: Plotting library for visualization (optional)
+# matplotlib>=3.7.0,<4.0.0
+
+# Seaborn: Statistical data visualization (optional)
+# seaborn>=0.12.0,<1.0.0
+
+# ==============================================================================
+# Development and Testing Dependencies (Optional)
+# ==============================================================================
+
+# pytest: Testing framework (uncomment for development)
+# pytest>=7.4.0,<8.0.0
+# pytest-asyncio>=0.21.0,<1.0.0
+# pytest-cov>=4.1.0,<5.0.0
+
+# Black: Code formatter (uncomment for development)
+# black>=23.7.0,<24.0.0
+
+# Mypy: Static type checker (uncomment for development)
+# mypy>=1.5.0,<2.0.0
+
+# Pylint: Code linter (uncomment for development)
+# pylint>=2.17.0,<3.0.0
+
+# ==============================================================================
+# Platform-Specific Notes
+# ==============================================================================
+
+# For Apple Silicon (M1/M2/M3) Macs:
+# - Install PyTorch with Metal Performance Shaders (MPS) support:
+#   pip install torch torchvision torchaudio
+#
+# For CUDA-enabled GPUs (Linux/Windows):
+# - Install PyTorch with CUDA support for accelerated embeddings:
+#   pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+#
+# For CPU-only environments:
+# - The default PyTorch installation (via sentence-transformers) will work.
+#   Performance will be slower but functionality remains intact.
+
+# ==============================================================================
+# Known Compatibility Issues
+# ==============================================================================
+
+# 1. Python 3.13: Some dependencies may not yet have wheels. Stick to 3.9-3.12.
+# 2. Windows: hnswlib may require Microsoft C++ Build Tools.
+# 3. spaCy models: Not in requirements.txt - must be downloaded separately.
+# 4. OpenAI API key: Must be set as environment variable OPENAI_API_KEY.
+
+# ==============================================================================
+# End of requirements.txt
+# ==============================================================================
