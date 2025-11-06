@@ -1,0 +1,137 @@
+﻿# ==============================================================================
+# High-Fidelity Configuration for "Prompting for Policy" Replication
+# ==============================================================================
+# This file contains all parameters required to run the end-to-end research
+# pipeline, ensuring reproducibility and easy modification of experimental settings.
+
+# --------------------------------------------------------------------------
+# Phase I: Persona Asset Generation Parameters
+# --------------------------------------------------------------------------
+phase_1_parameters:
+  corpus_source:
+    hugging_face_dataset_name: "proj-persona/PersonaHub"
+  
+  filtering:
+    keyword_filtering:
+      min_token_count: 2
+      lexicon:
+        - "central banking"
+        - "monetary policy"
+        - "Governing Council"
+        - "inflation"
+        - "deflation"
+        - "ECB"
+        - "euro area"
+        - "GDP"
+        - "unemployment"
+        - "interest rates"
+        - "quantitative easing"
+        - "APP"
+        - "PEPP"
+        - "LSAP"
+        - "Taylor rule"
+        - "DSGE"
+        - "VAR"
+        - "event study"
+        - "transmission channel"
+      language_allowlist:
+        - "en"
+        
+    ner_filtering:
+      model_name: "en_core_web_trf"
+      entity_types_to_exclude:
+        - "PERSON"
+      confidence_threshold: 0.0
+      invalid_json_policy: "fail"
+      
+    deduplication:
+      embedding_model_name: "sentence-transformers/all-mpnet-base-v2"
+      cosine_similarity_threshold: 0.90
+      deterministic_order_key: "id"
+      ann_index: "HNSW"
+
+  llm_as_judge:
+    model_name: "gpt-4o-mini"
+    api_settings:
+      temperature: 1.0
+      response_format: "json_object"
+      max_retries: 1
+      retry_backoff_sec: 2.0
+    judging_runs: 3
+    majority_vote_rule: "per-criterion >= 2 of 3"
+    invalid_response_policy: "one_retry_else_fail"
+    kappa_validation:
+      human_annotated_sample_size: 50
+      metrics:
+        - "cohens_kappa"
+    # Note: Large prompt templates are best stored in separate .txt files and loaded at runtime.
+    # For this configuration, they are represented by placeholders.
+    prompt_template:
+      system: "<Appendix A system prompt (verbatim)>"
+      user: "{persona_description}"
+
+  orchestration:
+    shard_size: 1000000
+    max_concurrency: 64
+    rate_limit_qps: 5
+    checkpoint_every_n: 100000
+
+# --------------------------------------------------------------------------
+# Phase II: Forecasting and Evaluation Parameters
+# --------------------------------------------------------------------------
+phase_2_parameters:
+  forecasting_llm:
+    model_name: "gpt-4o-2024-11-20"
+    api_settings:
+      temperature: 1.0
+      response_format: "json_object"
+      max_retries: 1
+      retry_backoff_sec: 2.0
+      
+  ablation_study:
+    baseline_runs_per_round: 100
+    
+  prompt_template:
+    system_with_persona: "<Appendix C system block including persona blurb>"
+    system_no_persona: "<Appendix C system block without persona blurb>"
+    user_context_and_task: "<Appendix C context + task + strict JSON schema (verbatim)>"
+    
+  scoring_and_inference:
+    monte_carlo_simulations: 10000
+    monte_carlo_seed: 42
+    significance_levels:
+      - 0.10
+      - 0.05
+      - 0.01
+    tie_handling: "exclude_from_win_counts"
+    
+  oos_and_availability:
+    oos_rounds:
+      - "2024Q1"
+      - "2024Q2"
+      - "2024Q3"
+      - "2024Q4"
+      - "2025Q1"
+      - "2025Q2"
+    oos_scored_horizons:
+      - "CY"
+      - "CY+1"
+    hicpx_available_from_round: "2016Q4"
+    
+  horizon_mapping:
+    compute_target_year: "CY -> year(round); CY+1 -> year(round)+1; CY+2 -> year(round)+2; LT -> contextual_data_df.lt_year"
+    
+  storage_and_qc:
+    persist_prompts_and_responses: true
+    log_token_usage: true
+    invalid_json_policy: "one_retry_else_drop_and_log"
+    artifact_schema:
+      - "persona_level_forecasts"
+      - "ai_panel_medians"
+      - "absolute_errors"
+      - "mae_by_var_horizon"
+      - "dispersion_stats"
+      - "win_share"
+      - "p_values"
+      - "ablation_t_test"
+      - "ablation_ks_test"
